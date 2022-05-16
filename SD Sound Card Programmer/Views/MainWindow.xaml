@@ -1,0 +1,178 @@
+﻿<Window x:Class="SD_Sound_Card_Programmer.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:converter="clr-namespace:SD_Sound_Card_Programmer.Converters"
+        mc:Ignorable="d"
+        Title="Sound Card Programmer"
+        Icon="pack://application:,,,/Resources/icon.ico"
+        WindowStartupLocation="CenterScreen"
+        Height="800" Width="1000">
+    
+    <Grid Margin="20 20 20 10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="30" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="30" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="30" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="0" Background="{DynamicResource PrimaryColor}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <TextBlock VerticalAlignment="Center" TextAlignment="Center" FontWeight="Bold" Text="Sound Oasis SD Card Programming Utility" />
+        </Border>
+
+        <Button Grid.Column="0" Grid.Row="2" Background="{DynamicResource PrimaryColor}" Content="Select File" Command="{Binding SelectFileCommand}" />
+        <Button Grid.Column="2" Grid.Row="2" Background="{DynamicResource PrimaryColor}" Content="Reset Selections" Command="{Binding ResetSelectionsCommand}" />
+        <Button Grid.Column="4" Grid.Row="2" Background="{DynamicResource PrimaryColor}" Content="Find SD Cards" Command="{Binding FindSDCardsCommand}" />
+        <Button Grid.Column="6" Grid.Row="2" Background="{DynamicResource PrimaryColor}" Content="Program SD Card" Command="{Binding ProgramSDCardCommand}" />
+
+        <Grid Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Column="0" VerticalContentAlignment="Center" Padding="15 0 0 0" ItemsSource="{Binding DriveList}" SelectedIndex="{Binding DriveSelection}">
+                <behaviours:Interaction.Triggers>
+                    <behaviours:EventTrigger EventName="SelectionChanged">
+                        <behaviours:InvokeCommandAction Command="{Binding DriveChangedCommand}" />
+                    </behaviours:EventTrigger>
+                </behaviours:Interaction.Triggers>
+            </ComboBox>
+
+            <ComboBox Grid.Column="2" VerticalContentAlignment="Center" Padding="15 0 0 0" SelectedIndex="{Binding SeriesSelection}">
+                <ComboBoxItem Content="BST-100 / BST-400" />
+                <ComboBoxItem Content="S-680 / S-002"/>
+                <behaviours:Interaction.Triggers>
+                    <behaviours:EventTrigger EventName="SelectionChanged">
+                        <behaviours:InvokeCommandAction Command="{Binding SeriesSelectionChangedCommand}" />
+                    </behaviours:EventTrigger>
+                </behaviours:Interaction.Triggers>
+            </ComboBox>
+        </Grid>
+        <Button Grid.Column="6" Grid.Row="4" x:Name="SaveSoundListButton" Background="{DynamicResource PrimaryColor}" Content="Save Sound List" Command="{Binding SaveSoundListCommand}" />
+
+        <Popup StaysOpen="True" 
+               IsOpen="{Binding IsSoundListEntryPopupOpen}"
+               AllowsTransparency="True"
+               PlacementTarget="{Binding ElementName=SaveSoundListButton}"
+               Placement="Left">
+            <Border CornerRadius="6" Background="White" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="30" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="1" Grid.Row="1" Text="Please enter a name for the saved sound list:" />
+                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding NewSoundListName}" Width="auto" VerticalContentAlignment="Center" Padding="5 0" BorderBrush="{Binding TextBoxBorderColor}" />
+
+                    <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Width="80" Margin="0 0 20 0" Content="Cancel" Command="{Binding SoundListPopupCancelCommand}" />
+                        <Button Width="80" Content="OK" Command="{Binding SoundListPopupOKCommand}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Popup>
+
+        <Border Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="6" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="{DynamicResource PrimaryColor}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="0 0 0 1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <TextBlock VerticalAlignment="Center" TextAlignment="Center" FontWeight="Bold" Text="Available Sounds" />
+                </Border>
+
+                <ListView Grid.Row="1" x:Name="AvailableSoundsList" ItemsSource="{Binding AvailableSounds}" SelectionMode="Multiple" HorizontalContentAlignment="Stretch" ScrollViewer.IsDeferredScrollingEnabled="False">
+                    <behaviours:Interaction.Triggers>
+                        <behaviours:EventTrigger EventName="SelectionChanged">
+                            <behaviours:InvokeCommandAction Command="{Binding SelectionChangedCommand}" />
+                        </behaviours:EventTrigger>
+                    </behaviours:Interaction.Triggers>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="{DynamicResource BorderColor}" BorderThickness="0 0 0 1">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{Binding ThumbnailSource}" Height="58" />
+                                    <TextBlock Margin="5 0" Text="{Binding Name}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding Size, Converter={x:Static converter:LongToSizeConverter.Instance}, StringFormat= ({0})}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected}"></Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+                
+                <Border Grid.Row="2" Background="{DynamicResource PrimaryColor}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="0 1 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <TextBlock VerticalAlignment="Center" TextAlignment="Center" Text="{Binding SelectionSize, Converter={x:Static converter:LongToSizeConverter.Instance}, StringFormat='Total Size of Selected Sounds: {0}'}" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="4" Grid.ColumnSpan="3" Grid.Row="6" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="{DynamicResource PrimaryColor}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="0 0 0 1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <TextBlock VerticalAlignment="Center" TextAlignment="Center" FontWeight="Bold" Text="Selected Sounds" />
+                </Border>
+
+                <ListView Grid.Row="1" ItemsSource="{Binding SelectedSounds}" HorizontalContentAlignment="Stretch">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="{DynamicResource BorderColor}" BorderThickness="0 0 0 1" Height="30">
+                                <TextBlock Margin="5 0" Text="{Binding Name}" VerticalAlignment="Center" />
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                
+                <Border Grid.Row="2" Background="{DynamicResource PrimaryColor}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="0 1 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                    <TextBlock VerticalAlignment="Center" TextAlignment="Center" Text="{Binding AvailableSize, Converter={x:Static converter:LongToSizeConverter.Instance}, StringFormat='Space Remaining on SD Card: {0}'}" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <StackPanel Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="7" Orientation="Horizontal" Visibility="{Binding IsBottomInfoVisible, Converter={StaticResource BooleanToVisibility}}">
+            <Image Source="pack://application:,,,/Resources/sd-card.png" Height="18" VerticalAlignment="Bottom" />
+            <TextBlock Margin="4 0 0 0" VerticalAlignment="Bottom" Text="Programming SD card. Please wait..." />
+        </StackPanel>
+    </Grid>
+</Window>
