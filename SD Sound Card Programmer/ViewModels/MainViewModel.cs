@@ -14,6 +14,9 @@ public class MainViewModel : BaseViewModel
     public bool IsSoundListEntryPopupOpen { get; set; } = false;
     public string NewSoundListName { get; set; } = string.Empty;
     public SolidColorBrush TextBoxBorderColor { get; set; } = new(Color.FromRgb(171, 173, 179));
+    public string BottomInfoText { get; set; } = string.Empty;
+    public int ProgressBarValue { get; set; }
+    public int ProgressBarMaximumValue { get; set; }
     #endregion
 
     #region Command Declarations
@@ -178,6 +181,9 @@ public class MainViewModel : BaseViewModel
             return;
         }
 
+        BottomInfoText = "Preparing...";
+        ProgressBarMaximumValue = SelectedSounds.Count;
+        ProgressBarValue = 0;
         IsBottomInfoVisible = true;
         foreach (Sound sound in SelectedSounds)
         {
@@ -189,11 +195,25 @@ public class MainViewModel : BaseViewModel
                 }
             }
 
-            await Task.Run(() => File.Copy(sound.Path, Path.Combine(DriveList[DriveSelection][0..2], new DirectoryInfo(sound.Path).Name)));
+            try
+            {
+                BottomInfoText = $"Writing {new DirectoryInfo(sound.Path).Name} to SD card...";
+                await Task.Run(() => File.Copy(sound.Path, Path.Combine(DriveList[DriveSelection][0..2], new DirectoryInfo(sound.Path).Name)));
+                ProgressBarValue++;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occured while copying files to SD card.\nError message: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                IsBottomInfoVisible = false;
+                ProgressBarValue = 0;
+                return;
+            }
         }
 
+        BottomInfoText = "Completed...";
         MessageBox.Show($"SD card programmed!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         IsBottomInfoVisible = false;
+        ProgressBarValue = 0;
     }
 
     private void SaveSoundList(object sender)

@@ -172,7 +172,8 @@
 
         <StackPanel Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="7" Orientation="Horizontal" Visibility="{Binding IsBottomInfoVisible, Converter={StaticResource BooleanToVisibility}}">
             <Image Source="pack://application:,,,/Resources/sd-card.png" Height="18" VerticalAlignment="Bottom" />
-            <TextBlock Margin="4 0 0 0" VerticalAlignment="Bottom" Text="Programming SD card. Please wait..." />
+            <TextBlock Margin="4 0 0 0" VerticalAlignment="Bottom" Text="{Binding BottomInfoText}" />
+            <ProgressBar Margin="8 0 0 0" Height="16" Width="100" VerticalAlignment="Bottom" Maximum="{Binding ProgressBarMaximumValue}" Value="{Binding ProgressBarValue}" />
         </StackPanel>
     </Grid>
 </Window>
