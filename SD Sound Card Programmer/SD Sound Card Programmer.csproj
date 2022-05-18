@@ -3,12 +3,13 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
-	  <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <RootNamespace>SD_Sound_Card_Programmer</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <StartupObject>SD_Sound_Card_Programmer.App</StartupObject>
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+	<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
   </PropertyGroup>
 
   <ItemGroup>

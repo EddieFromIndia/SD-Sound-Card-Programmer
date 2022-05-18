@@ -96,8 +96,15 @@ public class MainViewModel : BaseViewModel
     {
         AvailableSounds.Clear();
         SelectedSounds.Clear();
+
         string fileType = SeriesSelection == 0 ? "mp3" : "ogg";
-        string[]? files = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory[..AppContext.BaseDirectory.IndexOf("bin")], "Sounds", fileType));
+        string soundsFolderPath = Path.Combine(AppContext.BaseDirectory, "Sounds");
+        if (!Directory.Exists(soundsFolderPath))
+        {
+            MessageBox.Show($"Please put the exe file in the same folder as the Sounds/Images folder, and run the software again.", "Sounds/Images folder not found", MessageBoxButton.OK, MessageBoxImage.Error);
+            return;
+        }
+        string[]? files = Directory.GetFiles(Path.Combine(soundsFolderPath, fileType));
         foreach (string file in files)
         {
             AvailableSounds.Add(new()
