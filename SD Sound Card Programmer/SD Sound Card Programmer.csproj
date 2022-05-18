@@ -7,14 +7,9 @@
     <RootNamespace>SD_Sound_Card_Programmer</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <StartupObject>SD_Sound_Card_Programmer.App</StartupObject>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Assets\**" />
-    <EmbeddedResource Remove="Assets\**" />
-    <None Remove="Assets\**" />
-    <Page Remove="Assets\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Images\sd-card.png" />

@@ -63,10 +63,11 @@ public class MainViewModel : BaseViewModel
 
             SeriesSelection = fileText[fileText.IndexOf("Product:") + 9] == 'B' ? 0 : 1;
 
-            List<string>? soundList = fileText[(fileText.IndexOf("Sound name list:;") + 19)..].Replace(";" + Environment.NewLine + "End of file: \"EOF\";", "").Replace(Environment.NewLine, "").Split(';').ToList();
-            foreach (string sound in soundList)
+            Regex regex = new(@"([a-zA-Z0-9-]+\.(mp3|ogg))");
+            MatchCollection soundList = regex.Matches(fileText[fileText.IndexOf("Sound name list:;")..fileText.IndexOf("End of file: \"EOF\";")]);
+            foreach (Match sound in soundList)
             {
-                Sound? availableSound = AvailableSounds.Where(s => s.Name == NameConverter.ToFormalName(sound)).First();
+                Sound? availableSound = AvailableSounds.Where(s => s.Name == NameConverter.ToFormalName(sound.Value)).First();
                 if (availableSound is not null)
                 {
                     AvailableSounds.Where(s => s.Name == availableSound.Name).First().IsSelected = true;
@@ -75,13 +76,13 @@ public class MainViewModel : BaseViewModel
                 }
                 else
                 {
-                    MessageBox.Show($"The file \"{sound}\" could not be found!", "File missing", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"The file \"{sound.Value}\" could not be found in Sound folder!", "File missing", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             OnSelectionChanged(null);
         }
     }
-
+    
     [SuppressPropertyChangedWarnings]
     private void OnSelectionChanged(object? sender)
     {
@@ -96,7 +97,7 @@ public class MainViewModel : BaseViewModel
         AvailableSounds.Clear();
         SelectedSounds.Clear();
         string fileType = SeriesSelection == 0 ? "mp3" : "ogg";
-        string[]? files = Directory.GetFiles(Path.Combine(Assembly.GetExecutingAssembly().Location[..Assembly.GetExecutingAssembly().Location.IndexOf("bin")], "Sounds", fileType));
+        string[]? files = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory[..AppContext.BaseDirectory.IndexOf("bin")], "Sounds", fileType));
         foreach (string file in files)
         {
             AvailableSounds.Add(new()
