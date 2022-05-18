@@ -6,7 +6,7 @@ on:
       - "sound-card-programmer/v*"
 
 env:
-  PROJECT_PATH: SD-Sound-Card-Programmer/SD-Sound-Card-Programmer.csproj
+  PROJECT_PATH: SD Sound Card Programmer/SD Sound Card Programmer.csproj
 
 jobs:
   deploy:
